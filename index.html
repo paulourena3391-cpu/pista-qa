@@ -1,0 +1,2034 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Jugá ocho retos de análisis, diseño, implementación y ejecución de pruebas de software en un circuito de carros."
+    />
+    <meta name="color-scheme" content="dark" />
+    <title>Pista QA · Circuito de pruebas</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --ink: #f4f7ec;
+        --muted: #a3b1a6;
+        --lime: #d4f678;
+        --surface: #18221f;
+        --panel: #1d2a25;
+        --line: #34473d;
+        --warm: #ffb993;
+        --page: #101715;
+        --radius: 20px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 25px;
+      }
+      body {
+        margin: 0;
+        background: var(--page);
+        color: var(--ink);
+        font:
+          15px/1.55 "Segoe UI",
+          Arial,
+          sans-serif;
+      }
+      button,
+      select {
+        font: inherit;
+      }
+      button,
+      a,
+      select,
+      summary {
+        outline-offset: 4px;
+      }
+      button:focus-visible,
+      a:focus-visible,
+      select:focus-visible,
+      summary:focus-visible {
+        outline: 3px solid var(--lime);
+      }
+      button {
+        cursor: pointer;
+      }
+      button:disabled {
+        cursor: default;
+        opacity: 0.45;
+      }
+      a {
+        color: inherit;
+      }
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+      h2 {
+        line-height: 1.12;
+        letter-spacing: -0.035em;
+      }
+      p {
+        color: var(--muted);
+      }
+      [hidden] {
+        display: none !important;
+      }
+      .shell,
+      .header-inner {
+        width: min(1180px, calc(100% - 64px));
+        margin-inline: auto;
+      }
+      .skip {
+        position: absolute;
+        left: 20px;
+        top: 10px;
+        transform: translateY(-180%);
+        z-index: 20;
+        background: var(--lime);
+        color: #192418;
+        padding: 8px 12px;
+      }
+      .skip:focus {
+        transform: none;
+      }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+      .site-header {
+        border-bottom: 1px solid #2b3a33;
+        background: #121c18;
+      }
+      .header-inner {
+        min-height: 69px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        font-size: 18px;
+        letter-spacing: 0.105em;
+        font-weight: 850;
+      }
+      .brand-mark {
+        display: grid;
+        place-items: center;
+        width: 33px;
+        height: 33px;
+        border-radius: 9px;
+        background: var(--lime);
+        color: #20301c;
+        transform: skew(-8deg);
+        font-size: 20px;
+      }
+      .accent,
+      .live {
+        color: var(--lime);
+      }
+      .header-note {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .led {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--lime);
+        margin-right: 6px;
+        box-shadow: 0 0 10px #d4f67877;
+      }
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 11px;
+        border: 1px solid #4b6352;
+        border-radius: 9px;
+        background: #24342a;
+        color: #e9f1e7;
+        padding: 10px 15px;
+        font-weight: 680;
+        font-size: 13px;
+        text-decoration: none;
+        transition:
+          background 0.16s,
+          transform 0.16s,
+          border-color 0.16s;
+        line-height: 1.35;
+      }
+      .button:not(:disabled):hover {
+        background: #354c3a;
+        border-color: #8ba273;
+      }
+      .button:not(:disabled):active {
+        transform: translateY(1px);
+      }
+      .button.primary {
+        background: var(--lime);
+        border-color: var(--lime);
+        color: #22311b;
+      }
+      .button.primary:not(:disabled):hover {
+        background: #e3ffa1;
+        border-color: #e3ffa1;
+      }
+      .button.outline {
+        background: transparent;
+        border-color: #3c5144;
+        font-size: 12px;
+      }
+      .intro {
+        display: grid;
+        grid-template-columns: 1.1fr 1fr;
+        align-items: center;
+        gap: 48px;
+        padding: 58px 0 46px;
+      }
+      .eyebrow {
+        font-size: 10px;
+        color: #a9bd9f;
+        font-weight: 750;
+        letter-spacing: 0.17em;
+        text-transform: uppercase;
+      }
+      .intro .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .intro .eyebrow span {
+        height: 1px;
+        width: 22px;
+        background: var(--lime);
+      }
+      .intro h1 {
+        font-weight: 730;
+        font-size: clamp(43px, 6vw, 78px);
+        line-height: 1;
+        letter-spacing: -0.065em;
+        margin: 18px 0;
+      }
+      .intro h1 em {
+        font-style: normal;
+        color: var(--lime);
+      }
+      .intro-copy > p {
+        max-width: 445px;
+        font-size: 16px;
+      }
+      .intro-actions {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin-top: 23px;
+      }
+      .intro-actions > span {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .intro-actions b {
+        padding: 0 5px;
+        color: var(--lime);
+      }
+      .showcase {
+        overflow: hidden;
+        border: 1px solid #506848;
+        border-radius: 22px;
+        background:
+          repeating-linear-gradient(
+            115deg,
+            transparent 0 60px,
+            #ffffff06 60px 61px
+          ),
+          radial-gradient(ellipse at 60% 38%, #3e5635, #202f26 74%);
+        padding: 20px 22px;
+        position: relative;
+        isolation: isolate;
+      }
+      .showcase::before {
+        content: "";
+        position: absolute;
+        left: 12%;
+        top: 12%;
+        width: 70%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        border: 1px solid #a6c9772a;
+        z-index: -1;
+      }
+      .showcase-top,
+      .showcase-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+      .showcase-top {
+        font-size: 9px;
+        letter-spacing: 0.15em;
+        color: #cadbbf;
+      }
+      .showcase .car-svg {
+        display: block;
+        width: 100%;
+        height: 174px;
+        filter: drop-shadow(0 12px 10px #080c09a6);
+        animation: roll-in 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      }
+      .showcase-bottom {
+        border-top: 1px solid #758a655e;
+        padding-top: 13px;
+        font-weight: 650;
+      }
+      .showcase-bottom small {
+        display: block;
+        font-size: 11px;
+        color: #b3c4ab;
+        font-weight: 400;
+      }
+      .number-plate {
+        border: 1px solid #849572;
+        border-radius: 7px;
+        padding: 5px 9px;
+        color: #e6efdb;
+        font:
+          700 17px Consolas,
+          monospace;
+      }
+      .game {
+        scroll-margin-top: 20px;
+      }
+      .game-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 18px;
+        border-top: 1px solid var(--line);
+        padding: 24px 0 18px;
+      }
+      .game-header h2 {
+        font-size: 30px;
+        margin-top: 5px;
+      }
+      .progress-block {
+        width: 170px;
+        font-size: 12px;
+        color: #d6e3d0;
+        text-align: right;
+      }
+      .meter {
+        height: 5px;
+        background: #2c3a31;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-top: 8px;
+      }
+      .meter > div {
+        background: var(--lime);
+        height: 100%;
+        width: 0;
+        transition: width 0.3s ease;
+      }
+      .route {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+      .route-phase {
+        border: 1px solid var(--line);
+        background: #17211c;
+        border-radius: 13px;
+        padding: 11px 13px;
+      }
+      .route-phase > span {
+        display: block;
+        color: #a9b9a7;
+        font-size: 11px;
+        font-weight: 700;
+        margin-bottom: 7px;
+      }
+      .route-phase.active {
+        border-color: #6b854e;
+      }
+      .route-buttons {
+        display: flex;
+        gap: 6px;
+      }
+      .route-buttons button {
+        flex: 1;
+        min-width: 0;
+        padding: 5px 6px;
+        border-radius: 6px;
+        background: #25352c;
+        color: #d8e3d4;
+        border: 1px solid #405347;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .route-buttons button[aria-current="step"] {
+        background: var(--lime);
+        color: #1d2916;
+        border-color: var(--lime);
+      }
+      .route-buttons button[data-done="true"]:not([aria-current="step"]) {
+        background: #3a5534;
+        border-color: #678c54;
+        color: #def3c4;
+      }
+      .game-layout {
+        display: grid;
+        grid-template-columns: 1.07fr 0.93fr;
+        align-items: start;
+        gap: 16px;
+      }
+      .mission,
+      .track-panel {
+        border: 1px solid var(--line);
+        background: var(--surface);
+        border-radius: var(--radius);
+        min-width: 0;
+      }
+      .mission {
+        padding: 27px;
+        min-height: 535px;
+      }
+      .mission-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+      .chip,
+      .build {
+        font-size: 9px;
+        letter-spacing: 0.12em;
+        font-weight: 780;
+        border: 1px solid #557246;
+        background: #2a3a28;
+        color: #d1efac;
+        padding: 5px 8px;
+        border-radius: 6px;
+      }
+      .phase {
+        font-size: 11px;
+        color: #aebfa8;
+      }
+      .mission h2 {
+        font-size: 29px;
+      }
+      .mission-intro {
+        margin: 12px 0 19px;
+        font-size: 14px;
+      }
+      .mission-body h3 {
+        font-size: 14px;
+      }
+      .pick-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+        margin-bottom: 17px;
+      }
+      .pick {
+        min-width: 0;
+        display: block;
+        text-align: left;
+        padding: 13px 12px;
+        border-radius: 11px;
+        border: 1px solid #3b5143;
+        background: #24332b;
+        color: #f3f6ee;
+        font-size: 13px;
+        transition:
+          border-color 0.18s,
+          background 0.18s;
+      }
+      .pick > strong {
+        display: block;
+        margin: 4px 0;
+        font-size: 14px;
+      }
+      .pick > small {
+        display: block;
+        color: #aebfaf;
+        font-size: 11px;
+        line-height: 1.5;
+      }
+      .pick .symbol {
+        color: var(--lime);
+        font-size: 17px;
+      }
+      .pick:hover {
+        border-color: #809b62;
+      }
+      .pick[aria-pressed="true"] {
+        background: #364c2d;
+        border-color: var(--lime);
+      }
+      .pick[aria-pressed="true"] small {
+        color: #d1e0c6;
+      }
+      .stack {
+        display: grid;
+        gap: 8px;
+        margin-bottom: 15px;
+      }
+      .stack .pick {
+        width: 100%;
+      }
+      .field {
+        display: grid;
+        gap: 5px;
+        margin: 0 0 12px;
+        font-size: 13px;
+        font-weight: 650;
+      }
+      .field select {
+        min-width: 0;
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #516751;
+        border-radius: 8px;
+        background: #25352d;
+        color: var(--ink);
+        font-size: 13px;
+      }
+      .scenario {
+        background: #213027;
+        border: 1px solid #394d3b;
+        padding: 13px 15px;
+        margin-bottom: 15px;
+        border-radius: 10px;
+        color: #d5e4cc;
+        font-size: 13px;
+      }
+      .scenario strong {
+        color: var(--lime);
+      }
+      .feedback {
+        margin-top: 16px;
+        padding: 12px 14px;
+        background: #293c29;
+        border: 1px solid #5a794e;
+        border-radius: 9px;
+        color: #def0d1;
+        font-size: 13px;
+        animation: appear 0.24s ease both;
+      }
+      .feedback[data-kind="try"] {
+        background: #3d2f27;
+        border-color: #7b5542;
+        color: #ffd9c3;
+      }
+      .mission-actions {
+        margin-top: 13px;
+      }
+      .order-row {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        min-height: 40px;
+        padding: 7px 9px;
+        border: 1px dashed #51604c;
+        border-radius: 8px;
+        color: #bfcebb;
+        font-size: 12px;
+      }
+      .order-row b {
+        display: grid;
+        place-items: center;
+        width: 23px;
+        height: 23px;
+        border-radius: 6px;
+        background: #364b33;
+        color: var(--lime);
+        font:
+          600 11px Consolas,
+          monospace;
+        flex-shrink: 0;
+      }
+      .order-pool {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+        margin: 12px 0 14px;
+      }
+      .order-pool button {
+        font-size: 12px;
+        padding: 8px 10px;
+      }
+      .mini-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      .track-panel {
+        padding: 18px;
+      }
+      .track-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 13px;
+      }
+      .track-header h3 {
+        font-size: 18px;
+        letter-spacing: -0.025em;
+      }
+      .track-header .eyebrow {
+        font-size: 9px;
+      }
+      .track-frame {
+        display: grid;
+        grid-template-columns: 24px minmax(0, 1fr) 25px;
+        background: #253b2a;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #45624b;
+        padding: 6px 0;
+      }
+      .track-side {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        padding: 9px 0;
+        font-size: 9px;
+        font-weight: 750;
+        color: #adc49f;
+      }
+      .right-side span {
+        writing-mode: vertical-rl;
+        letter-spacing: 0.08em;
+      }
+      .track {
+        height: 326px;
+        position: relative;
+        overflow: hidden;
+        background: #2d3737;
+        border-inline: 3px solid #b2bdab;
+      }
+      .cells {
+        display: grid;
+        height: 100%;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(8, 1fr);
+      }
+      .cell {
+        min-width: 0;
+        border-right: 1px dashed #9aaf9b64;
+        border-bottom: 1px solid #839a8d16;
+        display: grid;
+        place-items: center;
+      }
+      .cell:nth-child(3n) {
+        border-right: 0;
+      }
+      .cell.finish {
+        background: repeating-conic-gradient(#c9d7cb 0% 25%, #465954 0% 50%)
+          50%/16px 16px;
+        border-color: transparent;
+      }
+      .cell.start {
+        background: #91ad7332;
+        border-top: 2px dashed #92b574;
+      }
+      .barrier {
+        display: block;
+        height: 55%;
+        width: 70%;
+        border-radius: 5px;
+        border: 1px solid #ffbc8c;
+        background: repeating-linear-gradient(
+          -45deg,
+          #f5a25e 0 8px,
+          #4a382d 8px 16px
+        );
+        box-shadow: 0 3px 8px #15161480;
+      }
+      .car-token {
+        position: absolute;
+        left: calc((var(--lane, 1) + 0.5) * 100% / 3);
+        top: calc((var(--row, 7) + 0.5) * 100% / 8);
+        width: 23px;
+        height: 37px;
+        transform: translate(-50%, -50%);
+        transition:
+          top 0.17s ease,
+          left 0.17s ease;
+        filter: drop-shadow(0 2px 3px #0d1311);
+        pointer-events: none;
+      }
+      .car-token svg {
+        width: 100%;
+        height: 100%;
+      }
+      .car-token.bump {
+        animation: bump 0.22s ease;
+      }
+      .telemetry {
+        display: flex;
+        gap: 10px;
+        justify-content: space-between;
+        margin-top: 13px;
+        font-size: 11px;
+        color: #a4b6a4;
+      }
+      .telemetry strong {
+        display: block;
+        margin-top: 2px;
+        color: #e9f4e1;
+        font-size: 13px;
+      }
+      .controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1.8fr 1.4fr;
+        gap: 6px;
+        margin-top: 14px;
+      }
+      .controls button {
+        min-width: 0;
+        padding: 9px 4px;
+        font-size: 12px;
+      }
+      .controls .brake {
+        background: #40312c;
+        border-color: #78564d;
+        color: #ffceba;
+      }
+      .track-help {
+        font-size: 11px;
+        margin-top: 10px;
+      }
+      .evidence {
+        display: grid;
+        gap: 8px;
+        margin-top: 14px;
+      }
+      .evidence div {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 9px 10px;
+        border: 1px solid #435748;
+        border-radius: 8px;
+        font-size: 12px;
+      }
+      .evidence span {
+        color: #a8baa7;
+      }
+      .evidence [data-proved="true"] {
+        background: #2d402b;
+        border-color: #719159;
+      }
+      .evidence [data-proved="true"] span {
+        color: var(--lime);
+      }
+      .compare {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin: 12px 0;
+      }
+      .compare div {
+        background: #24342b;
+        border: 1px solid #435749;
+        border-radius: 9px;
+        padding: 11px;
+        font-size: 12px;
+      }
+      .compare small {
+        display: block;
+        color: #a8baa7;
+        margin-bottom: 4px;
+      }
+      .results {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 22px;
+        border: 1px solid #6c8d50;
+        border-radius: 15px;
+        background: #253925;
+        margin: 19px 0;
+      }
+      .results h2 {
+        font-size: 27px;
+        margin: 4px 0 6px;
+      }
+      .results p:not(.eyebrow) {
+        font-size: 13px;
+      }
+      .finish-icon {
+        font-size: 30px;
+        color: var(--lime);
+        background: #3c5331;
+        border-radius: 13px;
+        padding: 10px 17px;
+      }
+      .rules {
+        padding: 14px 16px;
+        background: #18231c;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        margin: 20px 0;
+        color: #bdcdbb;
+        font-size: 13px;
+      }
+      .rules summary {
+        cursor: pointer;
+        font-weight: 700;
+        color: #e6efde;
+      }
+      .rules li {
+        margin: 5px 0;
+      }
+      .footer {
+        border-top: 1px solid var(--line);
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        color: #93a691;
+        font-size: 10px;
+        padding: 15px 0 28px;
+      }
+      .footer > span:first-child {
+        font-weight: 750;
+        letter-spacing: 0.11em;
+      }
+      @keyframes roll-in {
+        from {
+          opacity: 0;
+          transform: translateX(25px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @keyframes appear {
+        from {
+          opacity: 0;
+          transform: translateY(4px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      @keyframes bump {
+        50% {
+          transform: translate(-50%, calc(-50% - 4px));
+        }
+      }
+      @media (max-width: 860px) {
+        .intro {
+          gap: 24px;
+          padding: 37px 0 35px;
+        }
+        .intro h1 {
+          font-size: 54px;
+        }
+        .mission {
+          padding: 20px;
+        }
+        .track-panel {
+          padding: 14px;
+        }
+        .track {
+          height: 300px;
+        }
+        .mission h2 {
+          font-size: 25px;
+        }
+      }
+      @media (max-width: 660px) {
+        .shell,
+        .header-inner {
+          width: calc(100% - 30px);
+        }
+        .header-inner {
+          min-height: 56px;
+        }
+        .header-note {
+          display: none;
+        }
+        .brand {
+          font-size: 15px;
+        }
+        .intro {
+          grid-template-columns: 1fr;
+          padding: 28px 0 22px;
+        }
+        .intro h1 {
+          font-size: 47px;
+        }
+        .intro-copy > p {
+          font-size: 14px;
+        }
+        .showcase .car-svg {
+          height: 140px;
+        }
+        .game-header {
+          padding-top: 16px;
+        }
+        .game-header h2 {
+          font-size: 25px;
+        }
+        .progress-block {
+          width: 116px;
+          font-size: 11px;
+        }
+        .route {
+          grid-template-columns: 1fr 1fr;
+          gap: 7px;
+        }
+        .route-phase {
+          padding: 8px 9px;
+        }
+        .game-layout {
+          grid-template-columns: 1fr;
+        }
+        .mission {
+          min-height: 0;
+          padding: 17px;
+        }
+        .track-panel {
+          padding: 13px;
+        }
+        .game[data-driving="true"] .track-panel {
+          grid-row: 1;
+        }
+        .track {
+          height: 280px;
+        }
+        .results {
+          align-items: flex-start;
+          flex-wrap: wrap;
+        }
+        .footer {
+          flex-wrap: wrap;
+        }
+        .pick-grid {
+          gap: 7px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        *,
+        *::before,
+        *::after {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip" href="#game">Ir al juego</a>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="#top"
+          ><span class="brand-mark" aria-hidden="true">▰</span
+          ><span>PISTA<span class="accent">QA</span></span></a
+        >
+        <span class="header-note"
+          ><span class="led"></span> Laboratorio de carreras</span
+        >
+        <button type="button" id="reset-game" class="button outline">
+          Reiniciar partida
+        </button>
+      </div>
+    </header>
+
+    <main id="top" class="shell">
+      <section class="intro" aria-labelledby="title">
+        <div class="intro-copy">
+          <div class="eyebrow">
+            <span></span> Circuito de pruebas de software
+          </div>
+          <h1 id="title">La pista está lista.<br /><em>¿Y el juego?</em></h1>
+          <p>
+            Sos piloto de pruebas. Prepará el circuito, manejá el carro y
+            encontrá un fallo antes de que el juego salga a la pista.
+          </p>
+          <div class="intro-actions">
+            <button type="button" id="start" class="button primary">
+              Jugar <span aria-hidden="true">↗</span>
+            </button>
+            <span>8 retos <b aria-hidden="true">·</b> 4 etapas</span>
+          </div>
+        </div>
+        <div class="showcase" aria-hidden="true">
+          <div class="showcase-top">
+            <span>MODELO DE PRUEBA</span
+            ><span class="live"><i class="led"></i> PISTA ABIERTA</span>
+          </div>
+          <svg
+            class="car-svg"
+            viewBox="0 0 600 240"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <defs>
+              <linearGradient
+                id="body"
+                x1="300"
+                y1="90"
+                x2="300"
+                y2="190"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stop-color="#ecf1d9" />
+                <stop offset=".48" stop-color="#b5c49f" />
+                <stop offset="1" stop-color="#778c69" />
+              </linearGradient>
+              <linearGradient id="window" x1="300" y1="65" x2="300" y2="128">
+                <stop stop-color="#304b3a" />
+                <stop offset="1" stop-color="#17291f" />
+              </linearGradient>
+              <linearGradient id="rim">
+                <stop stop-color="#b9c4b0" />
+                <stop offset="1" stop-color="#5d6d53" />
+              </linearGradient>
+            </defs>
+            <ellipse
+              cx="301"
+              cy="201"
+              rx="225"
+              ry="11"
+              fill="#0f1e15"
+              opacity=".6"
+            />
+            <path
+              d="M72 157l15-29 103-16 64-49c10-8 24-11 40-11h84c16 0 28 5 41 15l65 49 43 13c12 4 20 13 21 24l3 29-22 8H91l-24-12z"
+              fill="url(#body)"
+              stroke="#cad7b7"
+              stroke-width="1.4"
+            />
+            <path
+              d="M210 109l53-40c6-4 15-6 23-6h84c11 0 21 4 29 11l48 37z"
+              fill="url(#window)"
+              stroke="#d4dfc4"
+              stroke-width="2"
+            />
+            <path
+              d="M315 63v47M374 65l11 46"
+              stroke="#b2c29b"
+              stroke-width="5"
+            />
+            <path
+              d="M210 119l-9 42M330 119v48M449 122l12 29"
+              stroke="#617751"
+              opacity=".65"
+            />
+            <path d="M88 143l66-7 21 6-62 8H83" fill="#f0f4d9" />
+            <path d="M493 131l34 10 5 11-35-8z" fill="#b55a46" />
+            <path d="M86 163h65M451 167h83" stroke="#394e34" stroke-width="5" />
+            <path
+              d="M163 127l303-4"
+              stroke="#edf3df"
+              stroke-width="2"
+              opacity=".75"
+            />
+            <path
+              d="M230 130h18M347 130h18"
+              stroke="#4e6544"
+              stroke-width="3"
+              stroke-linecap="round"
+            />
+            <path d="M185 167h258" stroke="#42583b" stroke-width="2" />
+            <circle cx="166" cy="178" r="35" fill="#132018" />
+            <circle cx="166" cy="178" r="25" fill="url(#rim)" />
+            <circle cx="166" cy="178" r="19" fill="#334731" />
+            <path
+              d="M166 160v36M148 178h36M153 165l26 26M153 191l26-26"
+              stroke="#a5b297"
+              stroke-width="4"
+            />
+            <circle cx="166" cy="178" r="6" fill="#d6dfc9" />
+            <circle cx="460" cy="178" r="35" fill="#132018" />
+            <circle cx="460" cy="178" r="25" fill="url(#rim)" />
+            <circle cx="460" cy="178" r="19" fill="#334731" />
+            <path
+              d="M460 160v36M442 178h36M447 165l26 26M447 191l26-26"
+              stroke="#a5b297"
+              stroke-width="4"
+            />
+            <circle cx="460" cy="178" r="6" fill="#d6dfc9" />
+            <path
+              d="M211 105l-12 4-3 13h23l6-7z"
+              fill="#92a77d"
+              stroke="#dce5ce"
+            />
+          </svg>
+
+          <div class="showcase-bottom">
+            <span>Piloto QA <small>Edición de práctica</small></span
+            ><span class="number-plate">08</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="game" class="game" aria-labelledby="game-title">
+        <header class="game-header">
+          <div>
+            <p class="eyebrow">Zona de juego</p>
+            <h2 id="game-title">Tu recorrido</h2>
+          </div>
+          <div class="progress-block">
+            <strong id="progress-label">0 de 8 banderas</strong>
+            <div
+              class="meter"
+              id="meter"
+              role="progressbar"
+              aria-label="Retos completados"
+              aria-valuemin="0"
+              aria-valuemax="8"
+              aria-valuenow="0"
+            >
+              <div id="meter-fill"></div>
+            </div>
+          </div>
+        </header>
+        <nav id="route" class="route" aria-label="Etapas y retos"></nav>
+
+        <div class="game-layout">
+          <article class="mission" aria-labelledby="mission-title">
+            <div class="mission-heading">
+              <span id="mission-number" class="chip">RETO 01 / 08</span
+              ><span id="mission-phase" class="phase">Análisis</span>
+            </div>
+            <h2 id="mission-title" tabindex="-1">Inspeccioná el circuito</h2>
+            <p id="mission-intro" class="mission-intro"></p>
+            <div id="mission-body"></div>
+            <p
+              id="feedback"
+              class="feedback"
+              role="status"
+              aria-live="polite"
+              hidden
+            ></p>
+            <div class="mission-actions">
+              <button type="button" id="next" class="button primary" hidden>
+                Siguiente reto <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          </article>
+
+          <aside class="track-panel" aria-label="Pista y controles">
+            <div class="track-header">
+              <div>
+                <span class="eyebrow">Simulador</span>
+                <h3>Pista de práctica</h3>
+              </div>
+              <span class="build" id="build-label">VISTA PREVIA</span>
+            </div>
+            <div class="track-frame">
+              <div class="track-side" aria-hidden="true">
+                <span>01</span><span>02</span><span>03</span>
+              </div>
+              <div class="track" id="track" aria-hidden="true">
+                <div class="cells" id="track-cells"></div>
+                <div id="car-token" class="car-token">
+                  <svg viewBox="0 0 36 62" focusable="false">
+                    <rect
+                      x="1"
+                      y="10"
+                      width="6"
+                      height="12"
+                      rx="2"
+                      fill="#111b17"
+                    />
+                    <rect
+                      x="29"
+                      y="10"
+                      width="6"
+                      height="12"
+                      rx="2"
+                      fill="#111b17"
+                    />
+                    <rect
+                      x="1"
+                      y="42"
+                      width="6"
+                      height="12"
+                      rx="2"
+                      fill="#111b17"
+                    />
+                    <rect
+                      x="29"
+                      y="42"
+                      width="6"
+                      height="12"
+                      rx="2"
+                      fill="#111b17"
+                    />
+                    <path
+                      d="M8 8Q9 3 15 2h6q6 1 7 6l4 12v29q-1 10-9 11H13Q5 59 4 49V20Z"
+                      fill="#d9f875"
+                    />
+                    <path d="m8 22 4-12h12l4 12-10 3Z" fill="#263a36" />
+                    <path d="M9 40h18v8l-5 5h-8l-5-5Z" fill="#46633f" />
+                    <path d="M16 27h4v10h-4Z" fill="#98ba41" />
+                    <path
+                      d="M7 12h5m12 0h5"
+                      stroke="#ffffe4"
+                      stroke-width="2"
+                    />
+                    <path
+                      d="M8 51h5m10 0h5"
+                      stroke="#eb7d68"
+                      stroke-width="2"
+                    />
+                  </svg>
+                </div>
+              </div>
+              <div class="track-side right-side" aria-hidden="true">
+                <span>META</span><span>PISTA</span><span>SALIDA</span>
+              </div>
+            </div>
+            <div class="telemetry">
+              <span>Posición <strong id="position">Salida</strong></span
+              ><span>Estado <strong id="car-state">En espera</strong></span>
+            </div>
+            <div
+              class="controls"
+              id="controls"
+              aria-label="Controles del carro"
+              hidden
+            >
+              <button
+                type="button"
+                class="button control"
+                data-drive="left"
+                aria-label="Cambiar a la izquierda"
+              >
+                ←
+              </button>
+              <button
+                type="button"
+                class="button control"
+                data-drive="right"
+                aria-label="Cambiar a la derecha"
+              >
+                →
+              </button>
+              <button type="button" class="button primary" data-drive="advance">
+                Acelerar ↑
+              </button>
+              <button type="button" class="button brake" data-drive="brake">
+                Frenar
+              </button>
+            </div>
+            <p id="track-help" class="track-help">
+              La pista se activa en los retos de ejecución.
+            </p>
+            <p class="sr-only" id="track-announcement" aria-live="polite"></p>
+          </aside>
+        </div>
+
+        <section
+          id="results"
+          class="results"
+          aria-labelledby="results-title"
+          hidden
+        >
+          <div class="finish-icon" aria-hidden="true">⚑</div>
+          <div>
+            <p class="eyebrow">Vuelta completa</p>
+            <h2 id="results-title" tabindex="-1">¡8 de 8 banderas!</h2>
+            <p>
+              Preparaste el circuito, ejecutaste las pruebas y documentaste el
+              fallo del freno.
+            </p>
+          </div>
+          <button type="button" class="button primary" id="download">
+            Descargar reporte
+          </button>
+        </section>
+      </section>
+
+      <details class="rules">
+        <summary>Reglas del juego que vamos a probar</summary>
+        <ul>
+          <li>
+            <strong>Acelerar</strong> mueve el carro una casilla hacia la meta.
+          </li>
+          <li>
+            <strong>Cambiar de carril</strong> mueve el carro de lado y conserva
+            su fila.
+          </li>
+          <li><strong>Frenar</strong> mantiene la posición del carro.</li>
+          <li><strong>Una barrera</strong> bloquea la entrada a su casilla.</li>
+          <li><strong>La meta</strong> se marca al llegar a la última fila.</li>
+        </ul>
+      </details>
+    </main>
+    <footer class="footer shell">
+      <span>PISTA QA / JUEGO EDUCATIVO</span
+      ><span>Análisis · Diseño · Implementación · Ejecución</span>
+    </footer>
+    <script>
+      "use strict";
+
+      const $ = (id) => document.getElementById(id);
+      const phases = ["Análisis", "Diseño", "Implementación", "Ejecución"];
+      const rowCount = 8;
+      const laneCount = 3;
+      const startRow = rowCount - 1;
+      const middleLane = 1;
+      const barrier = { row: 4, lane: middleLane };
+      const basePosition = { row: startRow, lane: middleLane };
+
+      const missions = [
+        {
+          title: "Inspeccioná el circuito",
+          intro:
+            "Las reglas del juego son tu punto de partida. Marcá tres elementos cuyo funcionamiento debemos comprobar antes de abrir la pista.",
+          build: inspectMission,
+        },
+        {
+          title: "Detectá el mayor riesgo",
+          intro:
+            "El equipo tiene tiempo para revisar un problema primero. Elegí el que afecta más el control del carro.",
+          build: riskMission,
+        },
+        {
+          title: "Predecí lo que pasará",
+          intro:
+            "Diseñar una prueba incluye anotar el resultado esperado antes de manejar. Completá las dos predicciones.",
+          build: predictionMission,
+        },
+        {
+          title: "Armá el caso de la barrera",
+          intro:
+            "Creá un caso que compruebe si el carro puede atravesar una barrera. Elegí dónde empieza, qué hará y qué debería ocurrir.",
+          build: caseMission,
+        },
+        {
+          title: "Prepará el garaje",
+          intro:
+            "Implementar las pruebas significa dejar listo lo que vas a usar. Cargá la pista estable, el carro en la salida y la barrera de práctica.",
+          build: garageMission,
+        },
+        {
+          title: "Ordená la hoja de ruta",
+          intro:
+            "Dejá el procedimiento listo para que otro piloto pueda repetir tu prueba. Tocá las tarjetas en el orden correcto.",
+          build: orderMission,
+        },
+        {
+          title: "Manejá y probá la pista",
+          intro:
+            "Conducí el carro de práctica y conseguí las tres evidencias. Primero probá la barrera y el freno. Después, esquivá la barrera y llegá a la meta.",
+          build: raceMission,
+        },
+        {
+          title: "El reto del freno",
+          intro:
+            "Te dieron otra versión del juego. Con el carro en la salida, pulsá Frenar. Compará lo que hizo con la regla del freno y decidí el resultado de la prueba.",
+          build: bugMission,
+        },
+      ];
+
+      let current = 0;
+      const completed = new Set();
+      const reportNotes = new Map();
+      const evidence = new Set();
+      let position = { ...basePosition };
+      let brakeObservation = null;
+
+      function placeMarkup(markup) {
+        $("mission-body").innerHTML = markup;
+      }
+
+      function feedback(message, kind = "ok") {
+        const box = $("feedback");
+        box.textContent = message;
+        box.dataset.kind = kind;
+        box.hidden = false;
+      }
+
+      function finishMission(message, note = message) {
+        completed.add(current);
+        reportNotes.set(current, note);
+        feedback(message);
+        renderRoute();
+        updateProgress();
+        $("next").hidden = false;
+      }
+
+      function picks(items, { multiple = false, columns = false } = {}) {
+        const selected = new Set();
+        const markup = `<div class="${columns ? "pick-grid" : "stack"}">${items
+          .map(
+            (item) => `
+    <button class="pick" type="button" data-pick="${item.id}" aria-pressed="false">
+      <span class="symbol" aria-hidden="true">${item.icon}</span>
+      <strong>${item.title}</strong><small>${item.detail}</small>
+    </button>`,
+          )
+          .join("")}</div>`;
+        function bind(onChange = () => {}) {
+          const buttons = [
+            ...$("mission-body").querySelectorAll("[data-pick]"),
+          ];
+          buttons.forEach((button) =>
+            button.addEventListener("click", () => {
+              const id = button.dataset.pick;
+              const alreadySelected = selected.has(id);
+              if (!multiple) selected.clear();
+              if (alreadySelected) selected.delete(id);
+              else selected.add(id);
+              buttons.forEach((item) =>
+                item.setAttribute(
+                  "aria-pressed",
+                  String(selected.has(item.dataset.pick)),
+                ),
+              );
+              onChange(selected);
+            }),
+          );
+        }
+        return { selected, markup, bind };
+      }
+
+      function answerButton(label) {
+        return `<button type="button" id="check" class="button primary">${label}</button>`;
+      }
+
+      function inspectMission() {
+        const options = picks(
+          [
+            {
+              id: "brake",
+              icon: "⊘",
+              title: "Freno",
+              detail: "Comprobar que el carro se quede en la casilla.",
+            },
+            {
+              id: "barrier",
+              icon: "▥",
+              title: "Barrera",
+              detail: "Comprobar que bloquee el paso.",
+            },
+            {
+              id: "finish",
+              icon: "⚑",
+              title: "Meta",
+              detail: "Comprobar que se marque al llegar.",
+            },
+            {
+              id: "trees",
+              icon: "♧",
+              title: "Color de los árboles",
+              detail: "El fondo de la pista es decorativo.",
+            },
+          ],
+          { multiple: true, columns: true },
+        );
+        placeMarkup(options.markup + answerButton("Confirmar inspección"));
+        options.bind();
+        $("check").onclick = () => {
+          const selected = options.selected;
+          if (
+            selected.size === 3 &&
+            ["brake", "barrier", "finish"].every((id) => selected.has(id))
+          ) {
+            finishMission(
+              "¡Primera bandera! Identificaste tres condiciones de prueba: freno, barrera y meta.",
+              "Condiciones seleccionadas: frenar sin moverse, bloquear una barrera y registrar la llegada a la meta.",
+            );
+          } else {
+            feedback(
+              "Buscá tres reglas que cambien lo que pasa al manejar. El color del fondo no es una de ellas.",
+              "try",
+            );
+          }
+        };
+      }
+
+      function riskMission() {
+        const options = picks([
+          {
+            id: "logo",
+            icon: "◇",
+            title: "Un logo se ve pequeño",
+            detail: "Se alcanza a leer y los controles responden.",
+          },
+          {
+            id: "brake",
+            icon: "⊘",
+            title: "El freno hace avanzar el carro",
+            detail: "El piloto intenta detenerse y el carro se mueve.",
+          },
+          {
+            id: "paint",
+            icon: "◈",
+            title: "Cambió el color de la carrocería",
+            detail: "El carro conserva el mismo movimiento.",
+          },
+        ]);
+        placeMarkup(options.markup + answerButton("Elegir prioridad"));
+        options.bind();
+        $("check").onclick = () => {
+          if (options.selected.has("brake")) {
+            finishMission(
+              "¡Bandera ganada! El freno va primero porque perder el control afecta la partida.",
+              "Prioridad alta: un freno que provoca movimiento afecta el control del carro.",
+            );
+          } else {
+            feedback(
+              "Pensá en qué problema impediría manejar el carro como esperás.",
+              "try",
+            );
+          }
+        };
+      }
+
+      function selectField(id, label, options) {
+        return `<label class="field" for="${id}">${label}<select id="${id}"><option value="">Elegí una opción</option>${options.map(([value, text]) => `<option value="${value}">${text}</option>`).join("")}</select></label>`;
+      }
+
+      function predictionMission() {
+        placeMarkup(
+          selectField(
+            "predict-brake",
+            "Si pulsamos Frenar en una casilla libre…",
+            [
+              ["move", "Avanza una casilla"],
+              ["stay", "Se queda en la misma casilla"],
+            ],
+          ) +
+            selectField("predict-finish", "Si el carro llega a la meta…", [
+              ["reset", "Vuelve a la salida de inmediato"],
+              ["arrive", "El juego registra que llegó"],
+            ]) +
+            answerButton("Comprobar predicciones"),
+        );
+        $("check").onclick = () => {
+          if (
+            $("predict-brake").value === "stay" &&
+            $("predict-finish").value === "arrive"
+          ) {
+            finishMission(
+              "¡Bandera ganada! Ya tenés resultados esperados para el freno y la meta.",
+              "Esperado: frenar conserva la posición y cruzar la meta marca la llegada.",
+            );
+          } else {
+            feedback(
+              "Consultá las reglas al pie. Frenar conserva la posición y la meta registra la llegada.",
+              "try",
+            );
+          }
+        };
+      }
+
+      function caseMission() {
+        position = { row: barrier.row + 1, lane: barrier.lane };
+        renderTrack();
+        placeMarkup(
+          selectField("case-position", "Posición inicial", [
+            ["left", "Carril izquierdo, sin barrera al frente"],
+            ["front", "En el carril central, justo antes de la barrera"],
+          ]) +
+            selectField("case-action", "Acción del piloto", [
+              ["brake", "Pulsar Frenar"],
+              ["advance", "Pulsar Acelerar hacia la barrera"],
+            ]) +
+            selectField("case-expected", "Resultado esperado", [
+              ["through", "El carro atraviesa la barrera"],
+              [
+                "blocked",
+                "La barrera bloquea el paso y el carro queda en su casilla",
+              ],
+            ]) +
+            answerButton("Guardar caso de prueba"),
+        );
+        $("case-position").onchange = (event) => {
+          position.lane = event.target.value === "left" ? 0 : middleLane;
+          renderTrack();
+        };
+        $("check").onclick = () => {
+          if (
+            $("case-position").value === "front" &&
+            $("case-action").value === "advance" &&
+            $("case-expected").value === "blocked"
+          ) {
+            finishMission(
+              "¡Caso guardado! Ya sabemos dónde empezar, qué botón pulsar y qué resultado comparar.",
+              "Caso de barrera: ubicar el carro justo antes de la barrera central, pulsar Acelerar y comprobar que no cambia de casilla.",
+            );
+          } else {
+            feedback(
+              "Para comprobar la barrera, poné el carro justo enfrente, intentá avanzar y esperá que bloquee el paso.",
+              "try",
+            );
+          }
+        };
+      }
+
+      function garageMission() {
+        const options = picks(
+          [
+            {
+              id: "stable",
+              icon: "▣",
+              title: "Pista estable",
+              detail:
+                "La versión de práctica para ejecutar las pruebas normales.",
+            },
+            {
+              id: "start",
+              icon: "▰",
+              title: "Carro en la salida",
+              detail: "Posición inicial en el carril central.",
+            },
+            {
+              id: "barrier",
+              icon: "▥",
+              title: "Barrera central",
+              detail: "Obstáculo que se usará en el caso de prueba.",
+            },
+          ],
+          { multiple: true },
+        );
+        placeMarkup(options.markup + answerButton("Cargar configuración"));
+        renderTrack({ showBarrier: false, showCar: false });
+        options.bind((selection) => {
+          renderTrack({
+            showBarrier: selection.has("barrier"),
+            showCar: selection.has("start"),
+          });
+          $("build-label").textContent = selection.has("stable")
+            ? "PRÁCTICA V1"
+            : "SIN VERSIÓN";
+        });
+        $("check").onclick = () => {
+          if (options.selected.size === 3) {
+            finishMission(
+              "¡Garaje listo! La pista, el carro y la barrera están preparados para la ejecución.",
+              "Entorno preparado con pista estable V1, carro en la salida central y barrera central de práctica.",
+            );
+          } else {
+            feedback(
+              "Cargá los tres elementos. Sin el carro en la salida o sin la barrera, el caso no se puede repetir tal como se diseñó.",
+              "try",
+            );
+          }
+        };
+      }
+
+      function orderMission() {
+        const steps = [
+          { id: "compare", text: "Comparar y registrar" },
+          { id: "drive", text: "Pulsar Acelerar" },
+          { id: "open", text: "Cargar la pista" },
+          { id: "position", text: "Ubicar el carro antes de la barrera" },
+        ];
+        const order = [];
+        placeMarkup(`<div id="order-slots" class="stack"></div><div id="order-pool" class="order-pool"></div>
+    <div class="mini-actions"><button type="button" class="button outline" id="undo-step">Deshacer último</button>${answerButton("Validar procedimiento")}</div>`);
+        function renderOrder() {
+          $("order-slots").innerHTML = steps
+            .map(
+              (_, index) =>
+                `<div class="order-row"><b>${index + 1}</b><span>${order[index]?.text ?? "Paso pendiente"}</span></div>`,
+            )
+            .join("");
+          $("order-pool").innerHTML = steps
+            .filter((step) => !order.includes(step))
+            .map(
+              (step) =>
+                `<button type="button" class="button" data-step="${step.id}">${step.text}</button>`,
+            )
+            .join("");
+          $("order-pool")
+            .querySelectorAll("[data-step]")
+            .forEach(
+              (button) =>
+                (button.onclick = () => {
+                  order.push(
+                    steps.find((step) => step.id === button.dataset.step),
+                  );
+                  renderOrder();
+                  (
+                    $("order-pool").querySelector("button") ?? $("check")
+                  ).focus();
+                }),
+            );
+          $("undo-step").disabled = order.length === 0;
+        }
+        renderOrder();
+        $("undo-step").onclick = () => {
+          order.pop();
+          renderOrder();
+        };
+        $("check").onclick = () => {
+          if (
+            order.map((step) => step.id).join(",") ===
+            "open,position,drive,compare"
+          ) {
+            finishMission(
+              "¡Bandera ganada! Tu procedimiento está listo para repetirlo en la pista.",
+              "Procedimiento: cargar pista, ubicar carro antes de la barrera, pulsar Acelerar y comparar con lo esperado.",
+            );
+          } else {
+            feedback(
+              "El orden empieza por cargar la pista y ubicar el carro. Después se ejecuta la acción y se compara. Podés deshacer los pasos.",
+              "try",
+            );
+          }
+        };
+      }
+
+      function raceMission() {
+        placeMarkup(`<div class="scenario"><strong>Tu misión en pista</strong><br>Con Acelerar subís una casilla. Las flechas laterales cambian de carril. Frenar debe dejarte donde estás.</div>
+    <div class="evidence" id="evidence-list" aria-label="Evidencias de la prueba"></div>
+    <div class="mini-actions"><button type="button" class="button outline" id="restart-car">Volver a la salida</button></div>`);
+        updateEvidence();
+        $("restart-car").onclick = () => {
+          position = { ...basePosition };
+          renderTrack();
+          feedback(
+            "Volviste a la salida. Las evidencias obtenidas siguen en tu lista.",
+          );
+        };
+      }
+
+      function updateEvidence() {
+        $("evidence-list").innerHTML = [
+          ["barrier", "La barrera bloqueó el avance"],
+          ["brake", "El freno mantuvo la posición"],
+          ["finish", "La meta registró la llegada"],
+        ]
+          .map(
+            ([key, label]) =>
+              `<div data-proved="${evidence.has(key)}"><strong>${label}</strong><span>${evidence.has(key) ? "✓ Verificado" : "Pendiente"}</span></div>`,
+          )
+          .join("");
+      }
+
+      function bugMission() {
+        placeMarkup(`<div class="scenario"><strong>Caso de prueba del freno</strong><br>Dejar el carro en la salida. Pulsar Frenar una vez. Esperar que conserve la posición.</div>
+    <div id="bug-evidence" class="compare"><div><small>Esperado</small>El carro se queda en la salida.</div><div><small>Observado</small><span id="bug-observed">Pulsá Frenar para verlo.</span></div></div>
+    <div class="mini-actions"><button type="button" class="button" data-verdict="passed" disabled>La prueba pasó</button><button type="button" class="button" data-verdict="failed" disabled>La prueba falló</button></div>`);
+        $("mission-body")
+          .querySelectorAll("[data-verdict]")
+          .forEach(
+            (button) =>
+              (button.onclick = () => {
+                if (!brakeObservation) return;
+                if (button.dataset.verdict === "failed") {
+                  finishMission(
+                    "¡Fallo encontrado! El carro avanzó al frenar. La prueba falló porque el resultado fue distinto al esperado.",
+                    "Incidencia en la versión candidata V2. Pasos: colocar el carro en la salida central y pulsar Frenar. Esperado: mantener posición. Observado: avanzó de la casilla 1 a la 2. Resultado: falló.",
+                  );
+                  $("results").hidden = false;
+                } else {
+                  feedback(
+                    "El freno debía mantener el carro en la salida. Compará ese resultado con el movimiento que viste.",
+                    "try",
+                  );
+                }
+              }),
+          );
+      }
+
+      function renderTrack({
+        showBarrier = true,
+        showCar = true,
+        status = "En espera",
+      } = {}) {
+        const cells = [];
+        for (let row = 0; row < rowCount; row += 1) {
+          for (let lane = 0; lane < laneCount; lane += 1) {
+            const kind =
+              row === 0 ? " finish" : row === startRow ? " start" : "";
+            const obstacle =
+              showBarrier && row === barrier.row && lane === barrier.lane
+                ? '<span class="barrier"></span>'
+                : "";
+            cells.push(`<div class="cell${kind}">${obstacle}</div>`);
+          }
+        }
+        $("track-cells").innerHTML = cells.join("");
+        const car = $("car-token");
+        car.hidden = !showCar;
+        car.style.setProperty("--row", position.row);
+        car.style.setProperty("--lane", position.lane);
+        const location =
+          position.row === 0
+            ? "Meta"
+            : position.row === startRow
+              ? "Salida"
+              : "Casilla " + (rowCount - position.row);
+        $("position").textContent = showCar
+          ? location + " · Carril " + (position.lane + 1)
+          : "Sin carro";
+        $("car-state").textContent = status;
+      }
+
+      function drive(command) {
+        if (current === 7) {
+          if (command === "brake" && !brakeObservation) demonstrateBug();
+          return;
+        }
+        if (current !== 6 || position.row === 0) return;
+        if (command === "brake") {
+          evidence.add("brake");
+          renderTrack({ status: "Freno verificado" });
+          feedback(
+            "El carro quedó en la misma casilla. La prueba del freno pasó.",
+          );
+        } else {
+          const target = { ...position };
+          if (command === "advance") target.row -= 1;
+          else if (command === "left") target.lane -= 1;
+          else if (command === "right") target.lane += 1;
+          if (target.lane < 0 || target.lane >= laneCount) return;
+          if (target.row === barrier.row && target.lane === barrier.lane) {
+            if (command === "advance") evidence.add("barrier");
+            renderTrack({ status: "Paso bloqueado" });
+            const car = $("car-token");
+            car.classList.remove("bump");
+            void car.offsetWidth;
+            car.classList.add("bump");
+            feedback(
+              "La barrera bloqueó la casilla. Cambiá a un carril libre para continuar.",
+            );
+          } else {
+            position = target;
+            if (position.row === 0) evidence.add("finish");
+            renderTrack({
+              status: position.row === 0 ? "Meta alcanzada" : "En pista",
+            });
+            if (position.row === 0 && evidence.size < 3)
+              feedback(
+                "Llegaste a la meta. Volvé a la salida para conseguir la evidencia que falta.",
+              );
+          }
+        }
+        $("track-announcement").textContent =
+          $("position").textContent + ". " + $("car-state").textContent;
+        updateEvidence();
+        if (evidence.size === 3 && !completed.has(6)) {
+          finishMission(
+            "¡Vuelta de prueba completada! Comprobaste la barrera, el freno y la meta.",
+            "Práctica V1: barrera bloqueó el paso, freno mantuvo la posición y meta registró la llegada. Las tres pruebas pasaron.",
+          );
+        }
+      }
+
+      function demonstrateBug() {
+        position = { ...basePosition, row: startRow - 1 };
+        brakeObservation = "El carro avanzó una casilla al pulsar Frenar.";
+        renderTrack({ status: "Avanzó al frenar" });
+        $("bug-observed").textContent = brakeObservation;
+        $("track-announcement").textContent = brakeObservation;
+        $("mission-body")
+          .querySelectorAll("[data-verdict]")
+          .forEach((button) => (button.disabled = false));
+        document.querySelector('[data-drive="brake"]').disabled = true;
+        feedback(
+          "Ya tenés el resultado observado. Elegí si la prueba pasó o falló.",
+        );
+      }
+
+      function renderRoute() {
+        const route = $("route");
+        route.innerHTML = phases
+          .map((phase, index) => {
+            const buttons = [index * 2, index * 2 + 1]
+              .map((number) => {
+                const ready =
+                  number === 0 ||
+                  completed.has(number - 1) ||
+                  completed.has(number);
+                const finished = completed.has(number);
+                return `<button type="button" data-mission="${number}" data-done="${finished}" ${number === current ? 'aria-current="step"' : ""} ${ready ? "" : "disabled"} aria-label="Reto ${number + 1}: ${missions[number].title}">${number + 1}${finished ? " ✓" : ""}</button>`;
+              })
+              .join("");
+            return `<div class="route-phase${Math.floor(current / 2) === index ? " active" : ""}"><span>${phase}</span><div class="route-buttons">${buttons}</div></div>`;
+          })
+          .join("");
+        route
+          .querySelectorAll("[data-mission]")
+          .forEach(
+            (button) =>
+              (button.onclick = () =>
+                openMission(Number(button.dataset.mission), true)),
+          );
+      }
+
+      function updateProgress() {
+        const count = completed.size;
+        $("progress-label").textContent = count + " de 8 banderas";
+        $("meter").setAttribute("aria-valuenow", String(count));
+        $("meter-fill").style.width = (count / missions.length) * 100 + "%";
+      }
+
+      function openMission(index, focus = false) {
+        current = index;
+        position = { ...basePosition };
+        brakeObservation = null;
+        const mission = missions[index];
+        const stage = phases[Math.floor(index / 2)];
+        $("mission-title").textContent = mission.title;
+        $("mission-intro").textContent = mission.intro;
+        $("mission-number").textContent =
+          "RETO " + String(index + 1).padStart(2, "0") + " / 08";
+        $("mission-phase").textContent = stage;
+        $("feedback").hidden = true;
+        $("next").hidden = !completed.has(index);
+        $("next").textContent =
+          index === 7 ? "Ver resultado final →" : "Siguiente reto →";
+        $("controls").hidden = index < 6;
+        $("game").dataset.driving = String(index >= 6);
+        $("build-label").textContent =
+          index === 7
+            ? "CANDIDATA V2"
+            : index === 6
+              ? "PRÁCTICA V1"
+              : "VISTA PREVIA";
+        $("track-help").textContent =
+          index === 7
+            ? "Probá solo el freno. También podés usar Espacio."
+            : index === 6
+              ? "Botones o teclado: ↑ acelera, ← y → cambian de carril, Espacio frena."
+              : "La pista se activa en los retos de ejecución.";
+        $("controls")
+          .querySelectorAll("[data-drive]")
+          .forEach(
+            (button) =>
+              (button.disabled =
+                index === 7 && button.dataset.drive !== "brake"),
+          );
+        renderTrack();
+        mission.build();
+        renderRoute();
+        if (focus) $("mission-title").focus();
+      }
+
+      function downloadReport() {
+        const lines = [
+          "PISTA QA · REPORTE DE PRUEBAS",
+          "Banderas: " + completed.size + " de 8",
+          "",
+        ];
+        missions.forEach((mission, index) => {
+          lines.push(
+            index +
+              1 +
+              ". " +
+              phases[Math.floor(index / 2)] +
+              " — " +
+              mission.title,
+          );
+          lines.push(reportNotes.get(index) ?? "Reto pendiente.", "");
+        });
+        const url = URL.createObjectURL(
+          new Blob(["\ufeff" + lines.join("\r\n")], {
+            type: "text/plain;charset=utf-8",
+          }),
+        );
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "pista-qa-reporte.txt";
+        document.body.append(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+
+      $("start").onclick = () => {
+        $("game").scrollIntoView({ block: "start" });
+        $("mission-title").focus({ preventScroll: true });
+      };
+      $("next").onclick = () => {
+        if (!completed.has(current)) return;
+        if (current < missions.length - 1) openMission(current + 1, true);
+        else $("results-title").focus();
+      };
+      $("reset-game").onclick = () => {
+        if (
+          completed.size > 0 &&
+          !window.confirm(
+            "¿Volver al primer reto y borrar el progreso de esta partida?",
+          )
+        )
+          return;
+        completed.clear();
+        reportNotes.clear();
+        evidence.clear();
+        $("results").hidden = true;
+        updateProgress();
+        openMission(0, true);
+      };
+      $("download").onclick = downloadReport;
+      document
+        .querySelectorAll("[data-drive]")
+        .forEach(
+          (button) => (button.onclick = () => drive(button.dataset.drive)),
+        );
+      const keyboard = {
+        ArrowLeft: "left",
+        ArrowRight: "right",
+        ArrowUp: "advance",
+        " ": "brake",
+      };
+      document.addEventListener("keydown", (event) => {
+        if (
+          current < 6 ||
+          event.repeat ||
+          event.altKey ||
+          event.ctrlKey ||
+          event.metaKey
+        )
+          return;
+        if (
+          event.target.closest?.("button, select, input, a, summary") &&
+          event.key === " "
+        )
+          return;
+        const command = keyboard[event.key];
+        if (!command) return;
+        event.preventDefault();
+        drive(command);
+      });
+
+      openMission(0);
+      updateProgress();
+    </script>
+  </body>
+</html>
